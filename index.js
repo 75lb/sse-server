@@ -1,6 +1,9 @@
+const eventSource = new EventSource('http://localhost:9000')
+
 window.chart = Highcharts.chart('container', {
   chart: {
-    type: 'area'
+    type: 'column',
+    animation: false //{ duration: 100 }
   },
   title: {
     text: 'products-channel-service'
@@ -9,36 +12,28 @@ window.chart = Highcharts.chart('container', {
     title: { text: 'ms' }
   },
   plotOptions: {
-    area: {
+    column: {
       stacking: 'normal',
-      // lineColor: '#666666',
-      // lineWidth: 1,
-      // marker: {
-      //   lineWidth: 1,
-      //   lineColor: '#666666'
-      // }
+      // marker: { enabled: false }
     }
   },
   series: [
     {
       name: 'get-ent',
-      data: [
-        208.3,
-        200.4,
-        150.2,
-        54.9,
-        354.2
-      ]
+      data: []
     },
     {
       name: 'get-product',
-      data: [
-        308.3,
-        300.4,
-        150.2,
-        154.9,
-        254.2
-      ]
+      data: []
     }
   ]
+})
+
+eventSource.addEventListener('getEntitlement', e => {
+  const data = JSON.parse(e.data || 0)
+  if (data) window.chart.series[0].addPoint(data / 1e6)
+})
+eventSource.addEventListener('getProductsDetails', e => {
+  const data = JSON.parse(e.data || 0)
+  if (data) window.chart.series[1].addPoint(data / 1e6)
 })
