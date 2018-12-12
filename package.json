@@ -1,0 +1,15 @@
+{
+  "name": "sse-server",
+  "author": "Lloyd Brookes <75pound@gmail.com>",
+  "version": "0.0.0",
+  "description": "sse-server",
+  "repository": "https://github.com/75lb/sse-server",
+  "keywords": [],
+  "license": "MIT",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "test": "test-runner test/*.js"
+  }
+}
