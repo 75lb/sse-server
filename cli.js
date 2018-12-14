@@ -1,69 +1,63 @@
 const util = require('./util.js')
-
-process.stdin.setEncoding('utf8')
-
-/* should be a stream managing backpressure */
-class SSEResponse {
-  constructor () {
-    this.events = []
-  }
-
-  attachResponse (res) {
-    this._res = res
-    res.writeHead(200, {
-      'content-type': 'text/event-stream',
-      'Access-Control-Allow-Origin': '*'
-    })
-  }
-
-  sendEvent (event) {
-    if (this._res) {
-      this._res.write(`event: ${event.name}\n`)
-      this._res.write(`data: ${JSON.stringify(event.data)}\n\n`)
-    } else {
-      this.events.push(event)
-    }
-  }
-
-  flush () {
-    // console.error(require('util').inspect(this.events, { depth: 6, colors: true }))
-    let event
-    while (event = this.events.shift()) {
-      this.sendEvent(event)
-    }
-  }
-
-  end () {
-    if (this._res) this._res.end()
-  }
-}
+const fs = require('fs')
+const path = require('path')
+const SSEResponse = require('./sse-response.js')
 
 const sseResponse = new SSEResponse()
 
-process.stdin.on('readable', function () {
-  let chunk = this.read()
+function onReadable (chunk) {
+  console.error('chunk', chunk)
   if (chunk) {
     chunk = chunk.trim()
-    console.error('chunk', chunk)
     while (chunk.length) {
       const event = util.getObject(chunk)
       if (event) {
         chunk = chunk.replace(event, '').trim()
         sseResponse.sendEvent(JSON.parse(event))
+      } else {
+        console.error('event not found', chunk)
+        break
       }
     }
   }
-})
+}
+
+class FifoReader {
+  constructor () {
+    this.terminating = false
+    const os = require('os')
+    this.fifoPath = path.resolve(os.homedir(), 'SSE')
+  }
+  createFifo () {
+    const fifo = this.fifo = fs.createReadStream(this.fifoPath)
+    fifo.setEncoding('utf8')
+    fifo.on('close', () => {
+      console.log('fifo close')
+      if (!this.terminating) this.createFifo()
+    })
+    // fifo.on('data', onReadable)
+    fifo.on('readable', () => {
+      onReadable(fifo.read())
+    })
+  }
+}
+
+const fifoReader = new FifoReader()
+fifoReader.createFifo()
 
 process.on('beforeExit', () => {
   console.log('beforeExit')
   sseResponse.end()
 })
-process.on('SIGINT', () => {
-  sseResponse.end()
-  process.exit(0)
-})
 
+process.on('SIGINT', () => {
+  fifoReader.terminating = true
+  console.log('SIGINT')
+  sseResponse.end()
+  fifoReader.fifo.close()
+  fifoReader.fifo.push(null)
+  fifoReader.fifo.read(0)
+})
 
 const http = require('http')
 const server = http.createServer((req, res) => {
@@ -71,8 +65,3 @@ const server = http.createServer((req, res) => {
   sseResponse.flush()
 })
 server.listen(9000, () => console.log('http://localhost:9000'))
-
-// process.stdin.on('end', function () {
-//   console.log('done')
-//   server.close()
-// })
