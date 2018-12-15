@@ -1,39 +1,45 @@
-const eventSource = new EventSource('http://localhost:9000')
+class SSEServer {
+  constructor () {
+    const SSEResponse = require('./lib/sse-response.js')
+    this.sseResponse = new SSEResponse()
+  }
 
-window.chart = Highcharts.chart('container', {
-  chart: {
-    type: 'column',
-    animation: false //{ duration: 100 }
-  },
-  title: {
-    text: 'products-channel-service'
-  },
-  yAxis: {
-    title: { text: 'ms' }
-  },
-  plotOptions: {
-    column: {
-      stacking: 'normal',
-      // marker: { enabled: false }
+  onReadable (chunk) {
+    const util = require('./lib/util.js')
+    if (chunk) {
+      chunk = chunk.trim()
+      // console.error('chunk', chunk)
+      while (chunk.length) {
+        const event = util.getObject(chunk)
+        if (event) {
+          chunk = chunk.replace(event, '').trim()
+          this.sseResponse.sendEvent(JSON.parse(event))
+        } else {
+          console.error('event not found', chunk)
+          break
+        }
+      }
     }
-  },
-  series: [
-    {
-      name: 'get-ent',
-      data: []
-    },
-    {
-      name: 'get-product',
-      data: []
-    }
-  ]
-})
+  }
 
-eventSource.addEventListener('getEntitlement', e => {
-  const data = JSON.parse(e.data || 0)
-  if (data) window.chart.series[0].addPoint(data / 1e6)
-})
-eventSource.addEventListener('getProductsDetails', e => {
-  const data = JSON.parse(e.data || 0)
-  if (data) window.chart.series[1].addPoint(data / 1e6)
-})
+  createServer () {
+    const http = require('http')
+    const sse = http.createServer((req, res) => {
+      this.sseResponse.attachResponse(res)
+      this.sseResponse.flush()
+    })
+
+    const net = require('net')
+    const input = net.createServer(connection => {
+      connection.setEncoding('utf8')
+      connection.on('data', this.onReadable.bind(this))
+      connection.on('error', err => {
+        if (err.code !== 'ECONNRESET') console.log(err)
+      })
+    })
+
+    return { sse, input }
+  }
+}
+
+module.exports = SSEServer
