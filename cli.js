@@ -1,11 +1,9 @@
-const util = require('./util.js')
-const fs = require('fs')
-const path = require('path')
 const SSEResponse = require('./sse-response.js')
 
 const sseResponse = new SSEResponse()
 
 function onReadable (chunk) {
+  const util = require('./util.js')
   console.error('chunk', chunk)
   if (chunk) {
     chunk = chunk.trim()
@@ -22,46 +20,23 @@ function onReadable (chunk) {
   }
 }
 
-class FifoReader {
-  constructor () {
-    this.terminating = false
-    const os = require('os')
-    this.fifoPath = path.resolve(os.homedir(), 'SSE')
-  }
-  createFifo () {
-    const fifo = this.fifo = fs.createReadStream(this.fifoPath)
-    fifo.setEncoding('utf8')
-    fifo.on('close', () => {
-      console.log('fifo close')
-      if (!this.terminating) this.createFifo()
-    })
-    // fifo.on('data', onReadable)
-    fifo.on('readable', () => {
-      onReadable(fifo.read())
-    })
-  }
-}
-
-const fifoReader = new FifoReader()
-fifoReader.createFifo()
-
-process.on('beforeExit', () => {
-  console.log('beforeExit')
-  sseResponse.end()
-})
-
-process.on('SIGINT', () => {
-  fifoReader.terminating = true
-  console.log('SIGINT')
-  sseResponse.end()
-  fifoReader.fifo.close()
-  fifoReader.fifo.push(null)
-  fifoReader.fifo.read(0)
-})
-
 const http = require('http')
 const server = http.createServer((req, res) => {
   sseResponse.attachResponse(res)
   sseResponse.flush()
 })
 server.listen(9000, () => console.log('http://localhost:9000'))
+
+const net = require('net')
+const socketServer = net.createServer(connection => {
+  console.log('connection')
+  connection.setEncoding('utf8')
+  connection.on('end', () => {
+    console.log('end')
+  })
+  connection.on('data', onReadable)
+  connection.on('error', err => {
+    if (err.code !== 'ECONNRESET') console.log(err)
+  })
+})
+socketServer.listen(9090, () => console.log('Socket port 9090'))

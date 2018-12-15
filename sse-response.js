@@ -2,6 +2,11 @@
 class SSEResponse {
   constructor () {
     this.backlog = []
+    process.on('SIGINT', () => {
+      console.log('SIGINT')
+      this.end()
+      process.exit(0)
+    })
   }
 
   attachResponse (res) {
@@ -18,6 +23,7 @@ class SSEResponse {
       this._res.write(`data: ${JSON.stringify(event.data)}\n\n`)
     } else {
       this.backlog.push(event)
+      console.log('backlog: ', this.backlog.length)
     }
   }
 
