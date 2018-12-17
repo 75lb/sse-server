@@ -3,20 +3,21 @@ class SSEServer {
     const SSEResponse = require('./lib/sse-response.js')
     this.sseResponse = new SSEResponse()
     this.options = options || {}
+    this.buf = ''
   }
 
   onReadable (chunk) {
     const util = require('./lib/util.js')
     if (chunk) {
-      chunk = chunk.trim()
       if (this.options.verbose) console.error('chunk', chunk)
-      while (chunk.length) {
-        const event = util.getObject(chunk)
+      this.buf += chunk.trim()
+      while (this.buf.length) {
+        const event = util.getObject(this.buf)
         if (event) {
-          chunk = chunk.replace(event, '').trim()
+          this.buf = this.buf.replace(event, '').trim()
           this.sseResponse.sendEvent(JSON.parse(event))
         } else {
-          console.error('event not found', chunk)
+          console.error('event not found', this.buf)
           break
         }
       }
