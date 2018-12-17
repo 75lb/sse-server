@@ -12,5 +12,8 @@
   },
   "scripts": {
     "test": "test-runner test/*.js"
+  },
+  "dependencies": {
+    "command-line-args": "^5.0.2"
   }
 }

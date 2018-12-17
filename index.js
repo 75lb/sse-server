@@ -1,14 +1,15 @@
 class SSEServer {
-  constructor () {
+  constructor (options) {
     const SSEResponse = require('./lib/sse-response.js')
     this.sseResponse = new SSEResponse()
+    this.options = options || {}
   }
 
   onReadable (chunk) {
     const util = require('./lib/util.js')
     if (chunk) {
       chunk = chunk.trim()
-      // console.error('chunk', chunk)
+      if (this.options.verbose) console.error('chunk', chunk)
       while (chunk.length) {
         const event = util.getObject(chunk)
         if (event) {
