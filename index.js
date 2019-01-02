@@ -9,8 +9,9 @@ class SSEServer {
   onReadable (chunk) {
     const util = require('./lib/util.js')
     if (chunk) {
-      if (this.options.verbose) console.error('chunk', chunk)
-      this.buf += chunk.trim()
+
+      if (this.options.verbose) console.error('chunk', chunk.trim())
+      this.buf += chunk
       while (this.buf.length) {
         const event = util.getObject(this.buf)
         if (event) {
