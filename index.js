@@ -1,24 +1,23 @@
 class SSEServer {
   constructor (options) {
-    const SSEResponse = require('./lib/sse-response.js')
-    this.sseResponse = new SSEResponse()
+    const EventQueue = require('./lib/event-queue.js')
     this.options = options || {}
-    this.buf = ''
+    this.eventQueue = new EventQueue(this.options)
+    this._buf = ''
   }
 
-  onReadable (chunk) {
+  _onInputSocketReadable (chunk) {
     const util = require('./lib/util.js')
     if (chunk) {
-
       if (this.options.verbose) console.error('chunk', chunk.trim())
-      this.buf += chunk
-      while (this.buf.length) {
-        const event = util.getObject(this.buf)
+      this._buf += chunk
+      while (this._buf.length) {
+        const event = util.getObject(this._buf)
         if (event) {
-          this.buf = this.buf.replace(event, '').trim()
-          this.sseResponse.sendEvent(JSON.parse(event))
+          this._buf = this._buf.replace(event, '').trim()
+          this.eventQueue.sendEvent(JSON.parse(event))
         } else {
-          console.error('event not found', this.buf)
+          console.error('event not found', this._buf)
           break
         }
       }
@@ -28,14 +27,14 @@ class SSEServer {
   createServer () {
     const http = require('http')
     const sse = http.createServer((req, res) => {
-      this.sseResponse.attachResponse(res)
-      this.sseResponse.flush()
+      this.eventQueue.attachResponse(res)
+      this.eventQueue.flush()
     })
 
     const net = require('net')
     const input = net.createServer(connection => {
       connection.setEncoding('utf8')
-      connection.on('data', this.onReadable.bind(this))
+      connection.on('data', this._onInputSocketReadable.bind(this))
       connection.on('error', err => {
         if (err.code !== 'ECONNRESET') console.log(err)
       })
