@@ -17,7 +17,7 @@ class SSEServer {
           this._buf = this._buf.replace(event, '').trim()
           this.eventQueue.sendEvent(JSON.parse(event))
         } else {
-          console.error('event not found', this._buf)
+          console.error('Event not found', this._buf)
           break
         }
       }
@@ -45,3 +45,7 @@ class SSEServer {
 }
 
 module.exports = SSEServer
+
+/*
+if one input chunk is bad JSON, parsing the input never works again as the buffer is forever invalid
+ */
