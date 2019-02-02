@@ -1,7 +1,7 @@
 {
   "name": "sse-server",
   "author": "Lloyd Brookes <75pound@gmail.com>",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Push an event stream from terminal to browser.",
   "repository": "https://github.com/75lb/sse-server",
   "bin": "bin/cli.js",
