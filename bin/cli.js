@@ -29,9 +29,14 @@ if (options.help) {
   const sseServer = new SSEServer(options)
   const server = sseServer.createServer()
   server.sse.listen(options.httpPort, () => console.log(`SSE server: http://localhost:${options.httpPort}`))
-  server.input.listen(options.inputPort, () => console.log(`Input socket: localhost:${options.inputPort}`))
   process.on('SIGINT', () => {
     sseServer.eventQueue.end()
     process.exit(0)
   })
+  if (!process.stdin.isTTY) {
+    process.stdin.setEncoding('utf8')
+    process.stdin.on('data', sseServer._onInputSocketReadable.bind(sseServer))
+  } else {
+    server.input.listen(options.inputPort, () => console.log(`Input socket: localhost:${options.inputPort}`))
+  }
 }
