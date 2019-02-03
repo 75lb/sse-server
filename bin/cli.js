@@ -28,7 +28,7 @@ if (options.help) {
 } else {
   const sseServer = new SSEServer(options)
   const server = sseServer.createServer()
-  server.sse.listen(options.httpPort, () => console.log(`SSE server: http://localhost:${options.httpPort}`))
+  server.sse.listen(options.httpPort, () => console.error(`SSE server: http://localhost:${options.httpPort}`))
   process.on('SIGINT', () => {
     sseServer.eventQueue.end()
     process.exit(0)
@@ -37,6 +37,6 @@ if (options.help) {
     process.stdin.setEncoding('utf8')
     process.stdin.on('data', sseServer._onInputSocketReadable.bind(sseServer))
   } else {
-    server.input.listen(options.inputPort, () => console.log(`Input socket: localhost:${options.inputPort}`))
+    server.input.listen(options.inputPort, () => console.error(`Input socket: localhost:${options.inputPort}`))
   }
 }
