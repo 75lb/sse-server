@@ -33,6 +33,11 @@ if (options.help) {
     sseServer.eventQueue.end()
     process.exit(0)
   })
+  if (options.verbose) {
+    setInterval(function () {
+      console.error('buffer size:', sseServer._buf.length)
+    }, 10000)
+  }
   if (!process.stdin.isTTY) {
     process.stdin.setEncoding('utf8')
     process.stdin.on('data', sseServer._onInputSocketReadable.bind(sseServer))

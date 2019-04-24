@@ -17,7 +17,9 @@ class SSEServer {
           this._buf = this._buf.replace(event, '').trim()
           this.eventQueue.sendEvent(JSON.parse(event))
         } else {
-          console.error('Event not found', this._buf)
+          if (this.options.verbose) {
+            console.error('Event not found', this._buf)
+          }
           break
         }
       }
