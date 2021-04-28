@@ -1,7 +1,8 @@
-[![view on npm](https://img.shields.io/npm/v/sse-server.svg)](https://www.npmjs.org/package/sse-server)
-[![npm module downloads](https://img.shields.io/npm/dt/sse-server.svg)](https://www.npmjs.org/package/sse-server)
+[![view on npm](https://badgen.net/npm/v/sse-server)](https://www.npmjs.org/package/sse-server)
+[![npm module downloads](https://badgen.net/npm/dt/sse-server)](https://www.npmjs.org/package/sse-server)
+[![Gihub repo dependents](https://badgen.net/github/dependents-repo/75lb/sse-server)](https://github.com/75lb/sse-server/network/dependents?dependent_type=REPOSITORY)
+[![Gihub package dependents](https://badgen.net/github/dependents-pkg/75lb/sse-server)](https://github.com/75lb/sse-server/network/dependents?dependent_type=PACKAGE)
 [![Build Status](https://travis-ci.org/75lb/sse-server.svg?branch=master)](https://travis-ci.org/75lb/sse-server)
-[![Dependency Status](https://badgen.net/david/dep/75lb/sse-server)](https://david-dm.org/75lb/sse-server)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/feross/standard)
 
 # sse-server
@@ -38,4 +39,4 @@ data: "two"
 
 * * *
 
-&copy; 2018-19 Lloyd Brookes \<75pound@gmail.com\>.
+&copy; 2018-21 Lloyd Brookes \<75pound@gmail.com\>.
