@@ -5,16 +5,18 @@
   "description": "Push an event stream from terminal to browser.",
   "repository": "https://github.com/75lb/sse-server",
   "bin": "bin/cli.js",
+  "type": "module",
+  "exports": "./index.js",
   "keywords": [],
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=12.17"
   },
   "scripts": {
     "test": "test-runner test/*.js"
   },
   "dependencies": {
-    "command-line-args": "^5.1.1",
+    "command-line-args": "^5.2.0",
     "command-line-usage": "^6.1.1"
   }
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-const SSEServer = require('../')
-const commandLineArgs = require('command-line-args')
+import SSEServer from 'sse-server'
+import commandLineArgs from 'command-line-args'
+import commandLineUsage from 'command-line-usage'
 
 const optionDefinitions = [
   { name: 'input-port', alias: 'i', defaultValue: 9090, type: Number },
@@ -10,7 +11,6 @@ const optionDefinitions = [
 ]
 const options = commandLineArgs(optionDefinitions, { camelCase: true })
 if (options.help) {
-  const commandLineUsage = require('command-line-usage')
   const usage = commandLineUsage([
     {
       header: 'sse-server',
