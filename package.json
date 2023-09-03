@@ -6,7 +6,6 @@
   "repository": "https://github.com/75lb/sse-server",
   "bin": "bin/cli.js",
   "type": "module",
-  "exports": "./index.js",
   "keywords": [],
   "license": "MIT",
   "engines": {
@@ -16,7 +15,10 @@
     "test": "test-runner test/*.js"
   },
   "dependencies": {
-    "command-line-args": "^5.2.0",
+    "command-line-args": "^5.2.1",
     "command-line-usage": "^6.1.1"
+  },
+  "devDependencies": {
+    "test-runner": "^0.10.1"
   }
 }

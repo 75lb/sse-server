@@ -2,7 +2,7 @@
 [![npm module downloads](https://badgen.net/npm/dt/sse-server)](https://www.npmjs.org/package/sse-server)
 [![Gihub repo dependents](https://badgen.net/github/dependents-repo/75lb/sse-server)](https://github.com/75lb/sse-server/network/dependents?dependent_type=REPOSITORY)
 [![Gihub package dependents](https://badgen.net/github/dependents-pkg/75lb/sse-server)](https://github.com/75lb/sse-server/network/dependents?dependent_type=PACKAGE)
-[![Build Status](https://travis-ci.org/75lb/sse-server.svg?branch=master)](https://travis-ci.org/75lb/sse-server)
+[![Node.js CI](https://github.com/75lb/sse-server/actions/workflows/node.js.yml/badge.svg)](https://github.com/75lb/sse-server/actions/workflows/node.js.yml)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/feross/standard)
 
 # sse-server
@@ -39,4 +39,4 @@ data: "two"
 
 * * *
 
-&copy; 2018-21 Lloyd Brookes \<75pound@gmail.com\>.
+&copy; 2018-22 Lloyd Brookes \<75pound@gmail.com\>.
